@@ -1,0 +1,16 @@
+[database]
+hostname = localhost
+database = power
+username = 
+password = 
+
+
+[sems]
+username = 
+password = 
+station_id = 
+
+[pvoutput]
+api-key = 
+site-id = 
+
