@@ -8,7 +8,7 @@ Heavily inspired by koen-lee: https://github.com/koen-lee/GoodweUDPToPvOutput/tr
 
 
 # How to use
-Basically all of the magic is in `goodwe.py`, it queries the inverter, and returns a dictionary
+Basically all of the magic is in `lib/goodwe.py`, it queries the inverter, and returns a dictionary
 containing whatever it can gather. Should support up to 4 MPPT, but tested on my own with 2, YMMV ;)
 
 
@@ -64,6 +64,17 @@ Output would look something like this:
 }
 ```
 
+# files
+```
+/lib
+    goodwe.py --> goodwe interface
+    pvoutput.py --> pvoutput interface
+    db.py --> pg database helper
+/scripts
+    run.py --> read metrics from inverter and store in db
+    p1.py --> read metrics from p1 electricity meter and store in db
+    push_status.py --> push status to pvoutput (from db)
+    push_output.py --> push daily totals to pvoutput (from db)
 # PVOutput support
 As a bonus, there's also some support for pvoutput, and a local db:
 - copy config.ini.dist to config.ini, and populate (inverter settings, db credentials and pvoutput api key)
