@@ -67,7 +67,10 @@ Output would look something like this:
 # PVOutput support
 As a bonus, there's also some support for pvoutput, and a local db:
 - copy config.ini.dist to config.ini, and populate (inverter settings, db credentials and pvoutput api key)
-- `run.py` will fetch data from the inverter and store it in the local db
+`run.py` will fetch data from the inverter and store it in the local db:
+```bash
+PYTHONPATH=.:$PYTHONPATH python scripts/run.py
+```
 - `push_status.py` and `push_output.py` will push your data to pvoutput
 - `p1.py` can read, parse and insert p1 data from a smart electricity meter
 - db structure is in db.sql
