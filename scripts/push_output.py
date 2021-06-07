@@ -5,14 +5,14 @@ import urllib
 import requests
 import math
 
-import db
-import pvoutput
+from lib.db import db
+from lib.pvoutput import pvoutput
 
 ## read config / ini file
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-cur = db.db(config).get_cursor()
+cur = db(config).get_cursor()
 
 query = """
 
@@ -55,7 +55,7 @@ WITH
 cur.execute(query)
 rows = cur.fetchall()
 
-pvoutput = pvoutput.pvoutput(config['pvoutput']['api-key'], config['pvoutput']['site-id'])
+pvoutput = pvoutput(config['pvoutput']['api-key'], config['pvoutput']['site-id'])
 
 
 

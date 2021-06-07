@@ -1,4 +1,3 @@
-#from sensor import SemsSensor
 import json
 import configparser
 import datetime
@@ -6,14 +5,14 @@ import urllib
 import requests
 import math
 
-import db
-import pvoutput
+from lib.db import db
+from lib.pvoutput import pvoutput
 
 ## read config / ini file
 config = configparser.ConfigParser()
 config.read('config.ini')
 
-cur = db.db(config).get_cursor()
+cur = db(config).get_cursor()
 
 query = """
 WITH
@@ -169,7 +168,7 @@ for row in rows:
 print(f'got {len(data)} rows')
 
 
-pvoutput = pvoutput.pvoutput(config['pvoutput']['api-key'], config['pvoutput']['site-id'])
+pvoutput = pvoutput(config['pvoutput']['api-key'], config['pvoutput']['site-id'])
 responses = pvoutput.sendDataStatus(data=data)
 
 

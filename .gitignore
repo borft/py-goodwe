@@ -1,2 +1,4 @@
-db.ini
+config.ini
+*.log
+archive/
 __pycache__

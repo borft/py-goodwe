@@ -1,4 +1,4 @@
-from goodwe import Goodwe,GoodweStatus
+from lib.goodwe import Goodwe,GoodweStatus
 import json
 import configparser
 import psycopg2
