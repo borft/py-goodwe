@@ -1,8 +1,8 @@
-from sensor import SemsSensor
 import json
 import configparser
 import datetime
 import urllib
+import requests
 import math
 
 import db
@@ -10,7 +10,7 @@ import pvoutput
 
 ## read config / ini file
 config = configparser.ConfigParser()
-config.read('db.ini')
+config.read('config.ini')
 
 cur = db.db(config).get_cursor()
 

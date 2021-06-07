@@ -1,8 +1,9 @@
-from sensor import SemsSensor
+#from sensor import SemsSensor
 import json
 import configparser
 import datetime
 import urllib
+import requests
 import math
 
 import db
@@ -10,7 +11,7 @@ import pvoutput
 
 ## read config / ini file
 config = configparser.ConfigParser()
-config.read('db.ini')
+config.read('config.ini')
 
 cur = db.db(config).get_cursor()
 
@@ -31,15 +32,22 @@ WITH
         
     ),
     -- create mapping from 5 minute intervals to sems data
+    -- make sure to have only one row per selected interval
     sems_sample_mapping AS (
-        SELECT 
-            s.sample,
-            timestamp without time zone 'epoch' +
-                round(extract(epoch from sample) /300)
-                * INTERVAL '300 second' as rounded_sample
-        FROM sems s
-        WHERE sample BETWEEN 
-            (SELECT d_start FROM data_range) AND (SELECT d_end FROM data_range)
+        SELECT
+            MIN(p.sample) as sample,
+            p.rounded_sample
+        FROM
+            (SELECT 
+                s.sample,
+                timestamp without time zone 'epoch' +
+                    round(extract(epoch from sample) /300)
+                    * INTERVAL '300 second' as rounded_sample
+            FROM sems s
+            WHERE sample BETWEEN 
+                (SELECT d_start FROM data_range) AND (SELECT d_end FROM data_range)
+        ) as p
+        GROUP BY p.rounded_sample
     ),
     -- mapping table with 5 minute intervals for electricity
     e_sample_mapping AS (
@@ -159,9 +167,6 @@ for row in rows:
         )
 
 print(f'got {len(data)} rows')
-
-
-
 
 
 pvoutput = pvoutput.pvoutput(config['pvoutput']['api-key'], config['pvoutput']['site-id'])

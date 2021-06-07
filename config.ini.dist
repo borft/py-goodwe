@@ -4,11 +4,10 @@ database = power
 username = 
 password = 
 
+[goodwe]
+ip = 192.168.65.209
+port = 8899
 
-[sems]
-username = 
-password = 
-station_id = 
 
 [pvoutput]
 api-key = 
