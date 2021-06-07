@@ -75,6 +75,8 @@ Output would look something like this:
     p1.py --> read metrics from p1 electricity meter and store in db
     push_status.py --> push status to pvoutput (from db)
     push_output.py --> push daily totals to pvoutput (from db)
+```
+
 # PVOutput support
 As a bonus, there's also some support for pvoutput, and a local db:
 - copy config.ini.dist to config.ini, and populate (inverter settings, db credentials and pvoutput api key)
