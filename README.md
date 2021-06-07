@@ -71,7 +71,7 @@ As a bonus, there's also some support for pvoutput, and a local db:
 ```bash
 PYTHONPATH=.:$PYTHONPATH python scripts/run.py
 ```
-- `push_status.py` and `push_output.py` will push your data to pvoutput
+- `push_status.py` and `push_output.py` will push your data to pvoutput and can be run similarly, requirement is to have `psycopg2` installed
 - `p1.py` can read, parse and insert p1 data from a smart electricity meter
 - db structure is in db.sql
 
