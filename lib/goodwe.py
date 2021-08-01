@@ -80,13 +80,14 @@ class Goodwe:
             raise Exception(f'comparing received {receivedCRC} {int.from_bytes(receivedCRC, "big")} to {calculatedCRC}')
             
 
-
+        # timestamp provided by inverter, internal clock seems to be a bit off
+        # so we provide our own timestamp in stead.
         date = datetime.datetime(
             year=data[5] + 2000, month = data[6], day=data[7],
             hour=data[8],minute=data[9], second=data[10])
 
         gw = {
-            'sample': date,
+            'sample': datetime.datetime.now(),
             'voltage_dc_1': to_16_bit(data[11:13]),
             'current_dc_1': to_16_bit(data[13:15]),
             'voltage_dc_2': to_16_bit(data[15:17]),
