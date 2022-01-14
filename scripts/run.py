@@ -56,6 +56,9 @@ db_fields = [
     'yield_total'
         ]
 
+# only add fields we have data for
+db_fields = [f for f in db_fields if f in data]
+
 # pretty printer
 def myconverter(o):
     if isinstance(o, datetime.datetime):

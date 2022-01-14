@@ -45,7 +45,7 @@ class Goodwe:
             try:
                 return self._getData(self._ip, self._port)
             except Exception as e:
-                print(f'Retrying {retries}')
+                print(f'Retrying {retries} {e}')
                 pass
         raise Exception('Could not get proper data after retrying')
 
@@ -116,7 +116,7 @@ class Goodwe:
         }
 
         if gw['yield_today'] > 6500:
-            raise Exception(f'Yield today to high {gw["yield_today"]}')
+            raise Exception(f'Yield today too high {gw["yield_today"]}')
         if gw['yield_total'] > 4000000:
             raise Exception(f'yield total too high {gw["yield_total"]}')
 
@@ -125,5 +125,17 @@ class Goodwe:
             if gw[f'voltage_dc_{i}'] < 6553:
                 gw[f'power_dc_{i}'] = gw[f'voltage_dc_{i}'] * gw[f'current_dc_{i}']
 
+        # remove f2 and f3 ac fields for single phase inverters
+        for i in [2,3]:
+            good = True
+            for field in ['voltage', 'current', 'frequency']:
+
+                gw_field = f'{field}_ac_{i}'
+                if gw_field not in gw:
+                    continue
+                if field == 'voltage' and gw[gw_field] == 6553.5:
+                    good = False
+                if not good:
+                    gw[gw_field] = 0
         return gw
 
