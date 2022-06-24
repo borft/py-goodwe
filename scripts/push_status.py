@@ -20,7 +20,7 @@ WITH
     -- this would be from now() - %s until now()
     data_range AS (
         SELECT 
-            NOW() - INTERVAL '2h'   AS d_start,
+            NOW() - INTERVAL '4h'   AS d_start,
             NOW()                   AS d_end
     ),
     -- range per date, 1 row per day
@@ -146,8 +146,16 @@ for row in rows:
         power_ac = row['power_ac']
     else:
         power_ac = 0
+    if row['power_in']:
+        power_in = row['power_in']
+    else:
+        power_in = 0
+    if row['power_out']:
+        power_out = row['power_out']
+    else:
+        power_out = 0
     energyConsumption = row['kwh_in_1'] + row['kwh_in_2'] - row['kwh_out_1'] - row['kwh_out_2'] + int(row['yield_today'])
-    powerConsumption = power_ac + row['power_in'] - row['power_out']
+    powerConsumption = power_ac + power_in - power_out
     data.append(
         ','.join(
             [str(e) for e in[
@@ -174,5 +182,8 @@ responses = pvoutput.sendDataStatus(data=data)
 
 
 for response in responses:
-    print(f'got response: {response.read().decode("utf-8")}')
+    if response:
+        print(f'got response: {response.read().decode("utf-8")}')
+    else:
+        print('request failed')
 

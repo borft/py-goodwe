@@ -76,6 +76,11 @@ except:
 
 cur = conn.cursor()
 
+if data['yield_today'] == 0:
+    sample = data['sample']
+    query = f"update sems set yield_today=0 where date(sample) = date('{sample}') and sample < '{sample}'"
+    cur.execute(query)
+
 ## prepare query
 cols = ','.join(db_fields)
 placeholders = ','.join(['%s' for m in db_fields])

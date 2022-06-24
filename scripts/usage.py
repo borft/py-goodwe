@@ -1,6 +1,7 @@
 import configparser, psycopg2, psycopg2.extras as extras
 from prettytable import PrettyTable
 import os
+from datetime import date
 
 config = configparser.ConfigParser()
 config.read(os.path.dirname(__file__) + '/../config.ini')
@@ -20,7 +21,10 @@ except Exception as e:
     exit(1)
 cur = conn.cursor()
 
-query = """
+start_date = os.environ.get('START_DATE', '2021-01-01')
+end_date = os.environ.get('END_DATE', date.today())
+
+query = f"""
 SELECT
         bar.start,
         bar.end,
@@ -49,7 +53,7 @@ FROM
                         electricity
                 /* start date of Powerpeers subscription */
                 WHERE
-                        date(sample) > '2020-12-31'
+                        date(sample) BETWEEN '{start_date}' AND '{end_date}'
                 GROUP BY
                         to_char(sample, 'YYYY-MM')
                 ORDER BY
@@ -62,7 +66,8 @@ FROM
                         MAX(kwh_out_1) as out_1,
                         MAX(kwh_out_2) as out_2
                 FROM electricity
-                WHERE date(sample) > '2020-12-31'
+                WHERE 
+                    date(sample) BETWEEN '{start_date}' AND '{end_date}'
                 GROUP BY
                         to_char(sample, 'YYYY-MM')
                 ORDER BY MIN(sample)) as prev ON prev.end=foo.end
@@ -75,10 +80,10 @@ FROM
                         MAX(sd.sample) as sample,
                         MAX(sd.yield_today) as yield
                         FROM sems sd
-                        WHERE date(sd.sample) > '2020-12-31'
+                        WHERE date(sd.sample) BETWEEN  '{start_date}' AND '{end_date}'
                         GROUP BY DATE(sd.sample)
                 ) as daily
-                WHERE date(sample) > '2020-12-31'
+                WHERE date(sample) BETWEEN '{start_date}' AND '{end_date}'
                 GROUP BY
                         to_char(daily.sample, 'YYYY-MM')
 

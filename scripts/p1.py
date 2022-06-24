@@ -3,6 +3,7 @@ import re
 import configparser
 import psycopg2
 import datetime
+from typing import List
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -42,7 +43,7 @@ mapping_table = {
 }
 
 
-telegram = []
+telegram: List[str] = []
 stop = False
 while not stop:
     lines = ser.read(1024).decode('utf-8').split('\n')

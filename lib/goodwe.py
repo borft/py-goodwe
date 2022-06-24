@@ -120,6 +120,11 @@ class Goodwe:
         if gw['yield_total'] > 4000000:
             raise Exception(f'yield total too high {gw["yield_total"]}')
 
+        if gw['status'] == GoodweStatus.WAITING:
+            # if inverter is in waiting state, yield_today sometimes isn't reset
+            # properly, and still has yesterday's value
+            gw['yield_totay'] = 0
+
         # add DC power output if applicable
         for i in range(1,5):
             if gw[f'voltage_dc_{i}'] < 6553:
