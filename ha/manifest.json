@@ -1,0 +1,11 @@
+{
+  "domain": "pg_home_power",
+  "name": "PG Home Power",
+  "documentation": "https://github.com/borft",
+  "dependencies": [],
+  "requirements": [],
+  "codeowners": ["@borft"],
+  "iot_class": "local_polling",
+  "version": "0.0.1"
+
+}

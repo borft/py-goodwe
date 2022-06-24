@@ -1,0 +1,1 @@
+"""PG Home Power component"""
