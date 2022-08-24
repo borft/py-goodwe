@@ -86,6 +86,8 @@ class Goodwe:
             year=data[5] + 2000, month = data[6], day=data[7],
             hour=data[8],minute=data[9], second=data[10])
 
+        print(f'inverter: {date}')
+
         gw = {
             'sample': datetime.datetime.now(),
             'voltage_dc_1': to_16_bit(data[11:13]),

@@ -20,7 +20,7 @@ WITH
     -- this would be from now() - %s until now()
     data_range AS (
         SELECT 
-            NOW() - INTERVAL '4h'   AS d_start,
+            NOW() - INTERVAL '1h'   AS d_start,
             NOW()                   AS d_end
     ),
     -- range per date, 1 row per day
@@ -30,7 +30,7 @@ WITH
         (SELECT d_start::date FROM data_range), (SELECT d_end::date FROM data_range),'1 day'::interval) dd
         
     ),
-    -- create mapping from 5 minute intervals to sems data
+    -- create mapping from 5 minute intervals to sems_fixed data
     -- make sure to have only one row per selected interval
     sems_sample_mapping AS (
         SELECT
@@ -42,7 +42,7 @@ WITH
                 timestamp without time zone 'epoch' +
                     round(extract(epoch from sample) /300)
                     * INTERVAL '300 second' as rounded_sample
-            FROM sems s
+            FROM sems_fixed s
             WHERE sample BETWEEN 
                 (SELECT d_start FROM data_range) AND (SELECT d_end FROM data_range)
         ) as p
@@ -93,7 +93,7 @@ WITH
             MAX(s.yield_today) AS yield_today,
             MAX(s.sample) AS sample,
             DATE(s.sample) AS date
-        FROM sems s
+        FROM sems_fixed s
         WHERE
             date(s.sample) BETWEEN
                 (SELECT DATE(d_start) FROM data_range) AND (SELECT d_end FROM data_range)
@@ -132,7 +132,7 @@ WITH
     INNER JOIN electricity e ON e.sample = esm.sample
     INNER JOIN e_baseline eb ON eb.date = DATE(e.sample)
     LEFT JOIN sems_sample_mapping ssm ON ssm.rounded_sample = esm.rounded_sample
-    LEFT JOIN sems s on s.sample = ssm.sample
+    LEFT JOIN sems_fixed s on s.sample = ssm.sample
     LEFT JOIN sems_yield_today syt ON syt.date = DATE(e.sample) 
     ORDER BY sample ASC
 """

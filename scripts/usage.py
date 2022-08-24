@@ -23,6 +23,7 @@ cur = conn.cursor()
 
 start_date = os.environ.get('START_DATE', '2021-01-01')
 end_date = os.environ.get('END_DATE', date.today())
+aggregation = os.environ.get('AGGREGATION', 'YYYY-MM')
 
 query = f"""
 SELECT
@@ -55,7 +56,7 @@ FROM
                 WHERE
                         date(sample) BETWEEN '{start_date}' AND '{end_date}'
                 GROUP BY
-                        to_char(sample, 'YYYY-MM')
+                        to_char(sample, '{aggregation}')
                 ORDER BY
                         MIN(sample)
                 ) as foo
@@ -69,25 +70,25 @@ FROM
                 WHERE 
                     date(sample) BETWEEN '{start_date}' AND '{end_date}'
                 GROUP BY
-                        to_char(sample, 'YYYY-MM')
+                        to_char(sample, '{aggregation}')
                 ORDER BY MIN(sample)) as prev ON prev.end=foo.end
 
         ) as bar
         LEFT JOIN (SELECT
-                to_char(daily.sample, 'YYYY-MM') AS yearmonth,
+                to_char(daily.sample, '{aggregation}') AS yearmonth,
                 SUM(daily.yield) as generation
                 FROM (SELECT
                         MAX(sd.sample) as sample,
                         MAX(sd.yield_today) as yield
-                        FROM sems sd
+                        FROM sems_fixed sd
                         WHERE date(sd.sample) BETWEEN  '{start_date}' AND '{end_date}'
                         GROUP BY DATE(sd.sample)
                 ) as daily
                 WHERE date(sample) BETWEEN '{start_date}' AND '{end_date}'
                 GROUP BY
-                        to_char(daily.sample, 'YYYY-MM')
+                        to_char(daily.sample, '{aggregation}')
 
-                ) as s ON s.yearmonth = to_char(bar.start, 'YYYY-MM')
+                ) as s ON s.yearmonth = to_char(bar.start, '{aggregation}')
         ORDER BY bar.start
 """
 

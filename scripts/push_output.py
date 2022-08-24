@@ -45,7 +45,7 @@ WITH
         - ((MAX(e.kwh_out_1) + MAX(e.kwh_out_2) - MAX(b.kwh_out))) ) AS c
     FROM electricity e
     INNER JOIN baseline b ON b.date = DATE(e.sample)
-    LEFT JOIN sems s ON DATE(s.sample) = DATE(e.sample)
+    LEFT JOIN sems_fixed s ON DATE(s.sample) = DATE(e.sample)
     WHERE DATE(e.sample) BETWEEN
         (SELECT d_start::date FROM data_range) AND (SELECT d_end::date FROM data_range)
     GROUP BY DATE(e.sample)
@@ -60,7 +60,9 @@ pvoutput = pvoutput(config['pvoutput']['api-key'], config['pvoutput']['site-id']
 
 
 for row in rows:
-    response = pvoutput.sendDataOutput(data=row)
-#    print(f'got response: {response}')
+    print(row)
+    data = {k: int(v) if v else 0 for k,v in row.items()}
+    response = pvoutput.sendDataOutput(data=data)
+    print(f'got response: {response}')
 
 

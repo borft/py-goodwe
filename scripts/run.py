@@ -73,13 +73,32 @@ try:
     conn = psycopg2.connect(dsn)
 except:
     print('db is b0rken')
+    exit(1)
 
 cur = conn.cursor()
 
-if data['yield_today'] == 0:
-    sample = data['sample']
-    query = f"update sems set yield_today=0 where date(sample) = date('{sample}') and sample < '{sample}'"
-    cur.execute(query)
+# this doesn't work if the first value isn't 0
+#if data['yield_today'] == 0:
+#    sample = data['sample']
+#    query = f"update sems set yield_today=0 where date(sample) = date('{sample}') and sample < '{sample}'"
+#    cur.execute(query)
+
+
+# fix to clean up too high values for yield_today. This should be a monotonic rising number 
+query = ''' 
+    WITH first_value as (
+        select sample 
+        from sems 
+        where date(sample)=date(now()) 
+        order by yield_today 
+        asc limit 1) 
+        update sems 
+        set yield_today=0 
+        where 
+            date(sample)=date(now()) 
+            and sample < (select sample from first_value);
+'''
+#cur.execute(query)
 
 ## prepare query
 cols = ','.join(db_fields)
